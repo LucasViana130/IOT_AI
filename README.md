@@ -35,7 +35,7 @@ A ausência de hardware não impede a demonstração do fluxo: leituras registra
 | Dashboard | Reunir indicadores, cultivos, leituras, atividades, alertas e processamentos. |
 | Guidance | Solicitar orientação estruturada com Gemini e fontes recuperadas por RAG. |
 
-Os endpoints essenciais são `POST /api/sensor-readings`, para entrada manual; `POST /api/crop-areas/{id}/sensor-readings/simulate`, para simulação de demonstração; `POST /api/crop-areas/{id}/risk-jobs`, sem body e com retorno 202; `GET /api/risk-jobs/{id}`, para consultar o estado; e `POST /api/risk-jobs/{id}/guidance`, sem body, para gerar ou reutilizar a orientação. O POST de guidance retorna o RiskJob com orientação ou fallback; se o cálculo ainda não terminou, retorna 409. Os demais contratos permanecem no [mapa da API](README.md#mapa-da-api).
+Os endpoints essenciais são `POST /api/sensor-readings`, para entrada manual; `POST /api/crop-areas/{id}/sensor-readings/simulate`, para simulação de demonstração; `POST /api/crop-areas/{id}/risk-jobs`, sem body e com retorno 202; `GET /api/risk-jobs/{id}`, para consultar o estado; e `POST /api/risk-jobs/{id}/guidance`, sem body, para gerar ou reutilizar a orientação. O POST de guidance retorna o RiskJob com orientação ou fallback; se o cálculo ainda não terminou, retorna 409. Os demais contratos permanecem no [mapa da API](https://github.com/deryksouza2006/GS-FINAL/blob/main/README.md#mapa-da-api).
 
 ## 4. Arquitetura
 
@@ -43,7 +43,7 @@ O mobile Expo/React Native autentica o produtor e consome a API Spring Boot. Pos
 
 O padrão **Transactional Outbox** grava o evento junto à operação de negócio. Um publicador encaminha os eventos ao RabbitMQ, e consumidores executam o processamento. Confirmações, idempotência e mecanismos limitados de recuperação tratam falhas de entrega. Esses mecanismos de mensageria são independentes da política de tentativa única da guidance.
 
-A API está publicada no Render. O registro de 17/11/2026 informa health, Swagger e OpenAPI com HTTP 200, PostgreSQL 16.15 com 19 migrations aplicadas e CloudAMQP por TLS na porta 5671. São verificações históricas; os endereços públicos e as condições do ambiente estão no [README](README.md#links-da-entrega).
+A API está publicada no Render. O registro de 17/11/2026 informa health, Swagger e OpenAPI com HTTP 200, PostgreSQL 16.15 com 19 migrations aplicadas e CloudAMQP por TLS na porta 5671. São verificações históricas; os endereços públicos e as condições do ambiente estão no [README](https://github.com/deryksouza2006/GS-FINAL/blob/main/README.md#links-da-entrega).
 
 ```mermaid
 flowchart LR
@@ -123,7 +123,7 @@ Quando a orientação falha, a API grava `fallback=true`, motivo explícito e te
 | Transporte e repetição | Cliente Google com uma tentativa e timeout; composição Spring AI sem retries de guidance. |
 | Persistência | Orientação válida e fallback gravados no job por serviço transacional restrito ao proprietário. |
 
-O prompt de sistema versionado orienta resposta em português, uso exclusivo dos dados e evidências fornecidos e indicação de informações ausentes. Ele proíbe inventar clima, chuva, características do solo e fontes, recomendar dosagens de agrotóxicos ou acionar irrigação. O arquivo é [agronomic-analysis-v1.txt](src/main/resources/prompts/agronomic-analysis-v1.txt), com versão `agronomic-v1` registrada na orientação.
+O prompt de sistema versionado orienta resposta em português, uso exclusivo dos dados e evidências fornecidos e indicação de informações ausentes. Ele proíbe inventar clima, chuva, características do solo e fontes, recomendar dosagens de agrotóxicos ou acionar irrigação. O arquivo é [agronomic-analysis-v1.txt](https://github.com/deryksouza2006/GS-FINAL/blob/main/src/main/resources/prompts/agronomic-analysis-v1.txt), com versão `agronomic-v1` registrada na orientação.
 
 O DTO limita resumo a 2.000 caracteres, recomendação a 4.000 e listas do modelo a dez textos de até 500 caracteres. Esses controles validam a estrutura, não a veracidade agronômica. A aplicação pode acrescentar avisos determinísticos à orientação final.
 
@@ -135,7 +135,7 @@ O prazo de cinco minutos de `AI_PROCESSING_TIMEOUT` pertence à reserva do fluxo
 
 RAG significa recuperar conteúdo antes de gerar a resposta. No AgroConecta, passagens agronômicas são buscadas por similaridade e enviadas ao Gemini junto ao resultado fixo do job. Não há pesquisa aberta na internet nem treinamento de um modelo próprio. PGVector foi escolhido para manter a busca vetorial no PostgreSQL já utilizado, sem acrescentar outro banco; não houve benchmark comparativo entre soluções.
 
-O corpus contém quatro sínteses locais em palavras próprias, com referências institucionais, em [rag/agronomy](src/main/resources/rag/agronomy). Não são cópias integrais dos sites. Os metadados registram identificador, título, instituição, URL, tema, versão e data de acesso. A inclusão das referências não significa endosso do AgroConecta pelas instituições.
+O corpus contém quatro sínteses locais em palavras próprias, com referências institucionais, em [rag/agronomy](https://github.com/deryksouza2006/GS-FINAL/blob/main/src/main/resources/rag/agronomy). Não são cópias integrais dos sites. Os metadados registram identificador, título, instituição, URL, tema, versão e data de acesso. A inclusão das referências não significa endosso do AgroConecta pelas instituições.
 
 | Instituição | Título registrado e referência |
 | --- | --- |
@@ -205,7 +205,7 @@ A validação externa de **14/11/2026, concluída às 23:41 −03**, realizou um
 | Preservação do risco | Ignorar risco sugerido pelo modelo e manter o valor Java. | `onlyRetrievedSourcesReturnedAndModelCannotChangeRisk`, em `JobGuidanceTests`, e `serviceAlwaysCopiesRiskFromLockedDeterministicResult`, em `RiskJobGuidanceIntegrationTests`; execução real manteve `CRITICAL`. | Preservar a regra não valida seus limiares para qualquer solo ou cultura. |
 | Prompt injection | Passagens permanecem em dados e risco continua protegido. | `RagAndPromptTests.structuredOutputKeepsInjectionInsideDataAndSearchDisabled`. | Verifica composição do prompt e autoridade da saída; não garante obediência absoluta do modelo. |
 
-As classes citadas permanecem no código: [testes de guidance](src/test/java/br/com/fiap/citizentech/water/JobGuidanceTests.java), [persistência e isolamento](src/test/java/br/com/fiap/citizentech/water/RiskJobGuidanceIntegrationTests.java), [RAG e prompt](src/test/java/br/com/fiap/citizentech/analysis/RagAndPromptTests.java) e [configuração](src/test/java/br/com/fiap/citizentech/analysis/config/AiConfigurationTests.java). Os nomes de métodos permitem localizar as asserções sem reproduzir dados de contas. Resultados históricos não garantem disponibilidade futura do provedor. Nenhum teste foi reexecutado nesta consolidação.
+As implementações e os testes citados permanecem no [repositório principal da API](https://github.com/deryksouza2006/GS-FINAL): [testes de guidance](https://github.com/deryksouza2006/GS-FINAL/blob/main/src/test/java/br/com/fiap/citizentech/water/JobGuidanceTests.java), [persistência e isolamento](https://github.com/deryksouza2006/GS-FINAL/blob/main/src/test/java/br/com/fiap/citizentech/water/RiskJobGuidanceIntegrationTests.java), [RAG e prompt](https://github.com/deryksouza2006/GS-FINAL/blob/main/src/test/java/br/com/fiap/citizentech/analysis/RagAndPromptTests.java) e [configuração](https://github.com/deryksouza2006/GS-FINAL/blob/main/src/test/java/br/com/fiap/citizentech/analysis/config/AiConfigurationTests.java). Os nomes de métodos permitem localizar as asserções sem reproduzir dados de contas. Resultados históricos não garantem disponibilidade futura do provedor. Nenhum teste foi reexecutado nesta consolidação.
 
 ## 12. Resultados comprovados
 
@@ -228,7 +228,7 @@ Essas evidências verificam contratos e controles técnicos. Não comprovam aume
 
 ## 14. Execução e demonstração
 
-A configuração técnica, as variáveis e os comandos permanecem no [README principal](README.md#execução-local). Credenciais devem ser fornecidas pelo ambiente seguro. Para geração externa, o acesso ao modelo e a carga do corpus precisam estar preparados; iniciar sem IA externa continua permitido.
+A configuração técnica, as variáveis e os comandos permanecem no [README principal](https://github.com/deryksouza2006/GS-FINAL/blob/main/README.md#execução-local). Credenciais devem ser fornecidas pelo ambiente seguro. Para geração externa, o acesso ao modelo e a carga do corpus precisam estar preparados; iniciar sem IA externa continua permitido.
 
 1. Iniciar PostgreSQL/PGVector e RabbitMQ conforme o ambiente local, ou confirmar a infraestrutura publicada.
 2. Iniciar a API com as variáveis apropriadas e conferir o health check.
@@ -241,7 +241,7 @@ A configuração técnica, as variáveis e os comandos permanecem no [README pri
 9. Conferir recomendação, avisos, fontes e eventual indicação de fallback.
 10. Reabrir o mesmo job por GET para comprovar a persistência, sem criar outra análise ou repetir geração desnecessariamente.
 
-Se a IA falhar, mostrar o risco e a contingência identificada. Uma orientação válida previamente persistida pode demonstrar o resultado histórico, deixando claro que sua consulta não comprova uma chamada nova ao provedor. O roteiro de [validação externa controlada](README.md#teste-manual-real-controlado) permanece separado da demonstração cotidiana.
+Se a IA falhar, mostrar o risco e a contingência identificada. Uma orientação válida previamente persistida pode demonstrar o resultado histórico, deixando claro que sua consulta não comprova uma chamada nova ao provedor. O roteiro de [validação externa controlada](https://github.com/deryksouza2006/GS-FINAL/blob/main/README.md#teste-manual-real-controlado) permanece separado da demonstração cotidiana.
 
 ## 15. Conclusão
 
