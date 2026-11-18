@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-11-18T10:44:09-03:00",
+  "target": "https://agroconecta-api-ms1a.onrender.com",
+  "mode": "real-java-render",
+  "scenario": "critical",
+  "runnerRepository": "https://github.com/LucasViana130/agro-conecta-iot-ai",
+  "runnerCommit": "d6b52beeca6efdda2f285bc86d994ab33e8cf5a0",
+  "runner": "scripts/verify_live_ai.py",
+  "exitCode": 1,
+  "observedFallback": true,
+  "observedReason": "PROVIDER_UNAVAILABLE",
+  "liveGenerationPassed": false,
+  "executionReached": "Criação dos recursos DEMO, envio das leituras, conclusão do job e resposta de guidance",
+  "limitations": [
+    "A causa interna da indisponibilidade não foi investigada nesta coleta",
+    "O script interrompeu antes das asserções de preservação de risco, fontes e reutilização",
+    "O commit implantado no Render não foi confirmado nesta tentativa",
+    "Credenciais, tokens, identificação do produtor e resposta integral foram omitidos"
+  ]
+}
